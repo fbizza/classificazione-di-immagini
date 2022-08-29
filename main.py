@@ -1,7 +1,7 @@
 import numpy as np
 from sklearn.neural_network import MLPClassifier
 from sklearn.metrics import accuracy_score
-from sklearn.preprocessing import StandardScaler
+from sklearn.preprocessing import RobustScaler
 import sys
 
 FILES = ["cifar-10-python/cifar-10-batches-py/data_batch_1",
@@ -16,7 +16,7 @@ def unpickle(file):
         dict = pickle.load(fo, encoding='bytes')
     return dict
 
-def load_training_data(n):
+def load_training_data(n):  # n is the number of examples batches that we will use to train our MLP
     try:
         if 1 <= n <= 5:
             data = []
@@ -30,10 +30,22 @@ def load_training_data(n):
                 RGB_pixels = np.vstack((RGB_pixels, data[j+1]))
             return RGB_pixels, np.array(classes)
         else:
-            raise BaseException("Incorrect number of training batches! \n(CIFAR-10 dataset has 5 training batches)")
+            raise BaseException("Incorrect number of training batches!\n"
+                                "(CIFAR-10 dataset has 5 training batches)")
     except BaseException as e:
         print(e)
         sys.exit(1)
 
-x, y = load_training_data(5)
+def load_test_data():
+    test = unpickle("cifar-10-python/cifar-10-batches-py/test_batch")
+    test_RGB_pixels = np.array(test[b'data'])
+    test_classes = np.array(test[b'labels'])
+    return test_RGB_pixels, test_classes
+
+def normalize_data(train_pixels, test_pixels):  # such that σ^2 = 1 and μ = 0
+    sc = RobustScaler()
+    scaler = sc.fit(train_pixels)
+    train_pixels_scaled = scaler.transform(train_pixels)
+    test_pixels_scaled = scaler.transform(test_pixels)
+    return train_pixels_scaled, test_pixels_scaled
 
