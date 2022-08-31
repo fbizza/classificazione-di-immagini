@@ -65,7 +65,7 @@ def train_and_predict(n):   # n is the number of examples batches that we will u
     train_RGB_pixels, train_classes = load_training_data(n)
     test_RGB_pixels, test_classes = load_test_data()
     x, y = normalize_data(train_RGB_pixels, test_RGB_pixels)
-    clf = MLPClassifier((50, 20), tol=0.000001, activation="relu", max_iter=10, solver="adam", n_iter_no_change=20, verbose=True)
+    clf = MLPClassifier((50, ), tol=0.000001, activation="relu", max_iter=10, solver="adam", n_iter_no_change=20, verbose=True)
     print("START OF TRAINING")
     clf.fit(x, train_classes)
     print("END OF TRAINING\n")
@@ -73,3 +73,16 @@ def train_and_predict(n):   # n is the number of examples batches that we will u
     return predictions, test_classes, clf
 
 
+##--------------EVALUATION and PLOTS--------------##
+def evaluate(predictions, truth):
+    accuracy = accuracy_score(predictions, truth)
+    print('Accuracy: {:.2f}\n'.format(accuracy))
+    report = classification_report(y_true=truth, y_pred=predictions, target_names=CLASSES)
+    print(report)
+    ConfusionMatrixDisplay.from_predictions(y_true=truth, y_pred=predictions, display_labels=CLASSES,
+                                            cmap="BuGn", colorbar=False, xticks_rotation="vertical")
+    plt.show()
+
+##--------------MAIN PROGRAM--------------##
+predictions, truth, clf = train_and_predict(5)
+evaluate(predictions, truth)
