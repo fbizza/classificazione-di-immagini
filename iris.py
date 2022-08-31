@@ -9,7 +9,7 @@ x = data["data"]
 y = data["target"]
 X_train, X_test, y_train, y_test = train_test_split(x, y, test_size=0.33)
 
-def normalize_data(x, y):  # such that σ^2 = 1 and μ = 0
+def normalize_data(x, y):  # such that σ = 1 and μ = 0
     sc = StandardScaler()
     scaler = sc.fit(x)
     x_scaled = scaler.transform(x)
