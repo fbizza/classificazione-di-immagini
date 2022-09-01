@@ -18,7 +18,7 @@ def normalize_data(x, y):  # such that σ = 1 and μ = 0
 
 
 X_train, X_test = normalize_data(X_train, X_test)
-clf = MLPClassifier((3, 3), tol=0.000001, activation="relu", max_iter=1000, solver="adam", n_iter_no_change=20, verbose=True)
+clf = MLPClassifier((3, 3), tol=0.000001, activation="relu", max_iter=10000, solver="adam", n_iter_no_change=20, verbose=True)
 clf.fit(X_train, y_train)
 predictions = clf.predict(X_test)
 print('Accuracy: {:.2f}'.format(accuracy_score(y_test, predictions)))

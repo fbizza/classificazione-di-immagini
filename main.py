@@ -7,7 +7,6 @@ from sklearn.preprocessing import StandardScaler
 import matplotlib.pyplot as plt
 import sys
 
-
 FILES = ["cifar-10-python/cifar-10-batches-py/data_batch_1",
          "cifar-10-python/cifar-10-batches-py/data_batch_2",
          "cifar-10-python/cifar-10-batches-py/data_batch_3",
@@ -24,6 +23,7 @@ def unpickle(file):
         dict = pickle.load(fo, encoding='bytes')
     return dict
 
+
 def load_training_data(n):  # n is the number of examples batches that we will use to train our MLP
     try:
         if 1 <= n <= 5:
@@ -34,8 +34,8 @@ def load_training_data(n):  # n is the number of examples batches that we will u
                 data.append(batch[b'data'])
                 classes.extend(batch[b'labels'])
             RGB_pixels = data[0]
-            for j in range(len(data)-1):
-                RGB_pixels = np.vstack((RGB_pixels, data[j+1]))
+            for j in range(len(data) - 1):
+                RGB_pixels = np.vstack((RGB_pixels, data[j + 1]))
             return RGB_pixels, np.array(classes)
         else:
             raise BaseException("Incorrect number of training batches!\n"
@@ -43,6 +43,7 @@ def load_training_data(n):  # n is the number of examples batches that we will u
     except BaseException as e:
         print(e)
         sys.exit(1)
+
 
 def load_test_data():
     test = unpickle("cifar-10-python/cifar-10-batches-py/test_batch")
@@ -61,11 +62,11 @@ def normalize_data(train_pixels, test_pixels):  # such that σ = 1 and μ = 0
 
 
 ##--------------TRAINING and PREDICTION--------------##
-def train_and_predict(n):   # n is the number of examples batches that we will use to train our MLP
+def train_and_predict(n):  # n is the number of examples batches that we will use to train our MLP
     train_RGB_pixels, train_classes = load_training_data(n)
     test_RGB_pixels, test_classes = load_test_data()
     x, y = normalize_data(train_RGB_pixels, test_RGB_pixels)
-    clf = MLPClassifier((400, 400), tol=0.000001, activation="relu", max_iter=101,
+    clf = MLPClassifier((50,), tol=0.000001, activation="relu", max_iter=20,
                         solver="adam", n_iter_no_change=20, verbose=True)
     print("START OF TRAINING")
     clf.fit(x, train_classes)
@@ -89,6 +90,7 @@ def evaluate(predictions, truth, clf):
     ConfusionMatrixDisplay.from_predictions(y_true=truth, y_pred=predictions, display_labels=CLASSES,
                                             cmap="BuGn", colorbar=False, xticks_rotation="vertical")
     plt.show()
+
 
 ##--------------MAIN PROGRAM--------------##
 predictions, truth, clf = train_and_predict(5)
