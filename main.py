@@ -67,7 +67,7 @@ def train_and_predict(n):  # n is the number of examples batches that we will us
     test_RGB_pixels, test_classes = load_test_data()
     x, y = normalize_data(train_RGB_pixels, test_RGB_pixels)
     clf = MLPClassifier((50,), tol=0.000001, activation="relu", max_iter=20,
-                        solver="adam", n_iter_no_change=20, verbose=True)
+                        solver="adam", n_iter_no_change=100, verbose=True, random_state= 29)
     print("START OF TRAINING")
     clf.fit(x, train_classes)
     print("END OF TRAINING\n")
@@ -81,15 +81,29 @@ def evaluate(predictions, truth, clf):
     print('Accuracy: {:.2f}\n'.format(accuracy))
     report = classification_report(y_true=truth, y_pred=predictions, target_names=CLASSES)
     print(report)
-    loss_vector = clf.loss_curve_
-    x_axis = list(range(0, len(loss_vector), 1))
-    plt.plot(x_axis, loss_vector)
+    training_set_loss_vector = clf.loss_curve_
+    test_set_loss_vector = test_set_loss(5)
+    x_axis = list(range(0, len(training_set_loss_vector), 1))
+    plt.plot(x_axis, training_set_loss_vector, color='b', label='training')
+    plt.plot(x_axis, test_set_loss_vector, color='r', label='test')
     plt.xlabel("Epochs")
     plt.ylabel("Loss")
     plt.title("Loss curve")
+    plt.legend(loc='best')
     ConfusionMatrixDisplay.from_predictions(y_true=truth, y_pred=predictions, display_labels=CLASSES,
                                             cmap="BuGn", colorbar=False, xticks_rotation="vertical")
     plt.show()
+
+def test_set_loss(n):
+    train_RGB_pixels, train_classes = load_training_data(n)
+    test_RGB_pixels, test_classes = load_test_data()
+    x, y = normalize_data(train_RGB_pixels, test_RGB_pixels)
+    clf = MLPClassifier((50,), tol=0.000001, activation="relu", max_iter=20,
+                        solver="adam", n_iter_no_change=100, verbose=True, random_state= 29)
+    clf.fit(y, test_classes)
+    loss_vector = clf.loss_curve_
+    return loss_vector
+
 
 
 ##--------------MAIN PROGRAM--------------##
