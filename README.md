@@ -1,4 +1,6 @@
 # classificazione-di-immagini
+Progetto di un classificatore multilayered perceptron per la classificazione delle immagini del dataset CIFAR-10
+
 Sono presenti 3 files:
 - Il pdf della relazione
 - iris.py
